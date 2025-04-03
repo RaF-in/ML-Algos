@@ -1,0 +1,22 @@
+class Solution:
+    def removeDuplicateLetters(self, s: str) -> str:
+        char_set = set(s)
+        char_dict = {ch:[i for i in range(len(s)) if s[i] == ch] for ch in s}
+        curr_indx = -1
+        ans = ""
+        def is_poss(ch):
+            nxt = bisect.bisect_left(char_dict[ch],curr_indx)
+            if nxt == len(char_dict[ch]):
+                return -1
+            if any([bisect.bisect_left(char_dict[och],char_dict[ch][nxt]) == len(char_dict[och]) for och in char_set if och != ch]):
+                return -1
+            return char_dict[ch][nxt]
+        for i in range(len(char_set)):
+            for ch in sorted(char_set):
+                nxt = is_poss(ch)
+                if nxt != -1:
+                    char_set.remove(ch)
+                    ans = ans + ch
+                    curr_indx = nxt
+                    break
+        return ans
